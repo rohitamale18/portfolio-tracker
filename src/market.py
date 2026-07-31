@@ -18,8 +18,13 @@ def get_stock_price_data(ticker: str, period: str) -> pd.DataFrame:
 
 
 def get_previous_day_stock_price(ticker: str) -> float:
-    base_stock_data = get_stock_price_data(ticker, "2d")
-    return base_stock_data.iloc[0]["Close"]
+    df = get_stock_price_data(ticker, "2d")
+    if df.empty:
+        return 0.0
+    df = df.sort_values("Date")
+    if len(df) < 2:
+        return float(df["Close"].iloc[-1]) if pd.notna(df["Close"].iloc[-1]) else 0.0
+    return float(df["Close"].iloc[-2])
 
 
 def get_latest_price_for_purchased_stocks(
@@ -34,14 +39,23 @@ def get_latest_price_for_purchased_stocks(
         .reset_index()
     )
 
-    purchased_stocks_with_last_price = pd.DataFrame()
-    last_price = pd.DataFrame()
-    for purchased_stock in purchased_stocks.reset_index()["ticker"]:
-        tmp = {
-            "ticker": purchased_stock,
-            "Close": get_stock_price_data(purchased_stock, "1d")["Close"],
-            "Previous Close": get_previous_day_stock_price(purchased_stock),
-        }
-        last_price = pd.concat([last_price, pd.DataFrame(tmp)], ignore_index=True)
-    purchased_stocks_with_last_price = pd.merge(purchased_stocks, last_price)
+    rows = []
+    for ticker in purchased_stocks["ticker"]:
+        hist = get_stock_price_data(ticker, "2d")
+        if hist.empty:
+            print(f"Warning: no price data for {ticker}, skipping")
+            continue
+        hist = hist.sort_values("Date")
+        # Ensure Close is numeric
+        hist = hist.dropna(subset=["Close"])
+        if hist.empty:
+            continue
+        latest = float(hist["Close"].iloc[-1])
+        prev = float(hist["Close"].iloc[-2]) if len(hist) >= 2 else latest
+        rows.append({"ticker": ticker, "Close": latest, "Previous Close": prev})
+
+    last_price = pd.DataFrame(rows)
+    if last_price.empty:
+        return purchased_stocks  # fallback, no price data
+    purchased_stocks_with_last_price = pd.merge(purchased_stocks, last_price, on="ticker", how="left")
     return purchased_stocks_with_last_price
