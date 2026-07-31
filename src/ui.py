@@ -55,7 +55,18 @@ def get_stock_portfolio_table(purchased_stocks_with_metrics: pd.DataFrame):
             selection_mode="single-row",
             key="ticker",
             hide_index=True,
-            width='stretch'
+            width='stretch',
+            column_order=(
+                'ticker',
+                'Close',
+                'total_quantity',
+                'daily_return',
+                'delta',
+                'todays_change',
+                'todays_change_pct',
+                'delta_pct',
+                'avg_purchase_price'
+            )
         )
         selected_stock = stock_selection.selection.rows
 
