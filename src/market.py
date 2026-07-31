@@ -47,5 +47,7 @@ def get_latest_price_for_purchased_stocks(
     last_price = pd.DataFrame(rows)
     if last_price.empty:
         return purchased_stocks  # fallback, no price data
-    purchased_stocks_with_last_price = pd.merge(purchased_stocks, last_price, on="ticker", how="left")
+    purchased_stocks_with_last_price = pd.merge(
+        purchased_stocks, last_price, on="ticker", how="left"
+    )
     return purchased_stocks_with_last_price
