@@ -1,6 +1,6 @@
 import pandas as pd
 import yfinance as yf
-from datetime import date, timedelta
+from datetime import date
 
 
 def get_stock_price_data(ticker: str, period: str) -> pd.DataFrame:
@@ -15,16 +15,6 @@ def get_stock_price_data(ticker: str, period: str) -> pd.DataFrame:
             data=[[date.today(), ticker, None]], columns=["Date", "ticker", "Close"]
         )
     return historic_stock_data
-
-
-def get_previous_day_stock_price(ticker: str) -> float:
-    df = get_stock_price_data(ticker, "2d")
-    if df.empty:
-        return 0.0
-    df = df.sort_values("Date")
-    if len(df) < 2:
-        return float(df["Close"].iloc[-1]) if pd.notna(df["Close"].iloc[-1]) else 0.0
-    return float(df["Close"].iloc[-2])
 
 
 def get_latest_price_for_purchased_stocks(
@@ -57,5 +47,7 @@ def get_latest_price_for_purchased_stocks(
     last_price = pd.DataFrame(rows)
     if last_price.empty:
         return purchased_stocks  # fallback, no price data
-    purchased_stocks_with_last_price = pd.merge(purchased_stocks, last_price, on="ticker", how="left")
+    purchased_stocks_with_last_price = pd.merge(
+        purchased_stocks, last_price, on="ticker", how="left"
+    )
     return purchased_stocks_with_last_price
