@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    container_name: portfolio-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DB_PATH=/app/data/portfolio.db
+    restart: unless-stopped
