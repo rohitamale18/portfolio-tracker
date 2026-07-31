@@ -76,6 +76,7 @@ def get_stock_portfolio_table(purchased_stocks_with_metrics: pd.DataFrame):
                 "Close",
                 "total_quantity",
                 "daily_return",
+                "total_return",
                 "delta",
                 "todays_change",
                 "todays_change_pct",
