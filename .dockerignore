@@ -1,0 +1,6 @@
+.venv
+__pycache__
+*.db
+stock_data/
+.vscode/
+.DS_Store
