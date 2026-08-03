@@ -1,5 +1,9 @@
 from src.metrics import get_purchased_stocks_with_metrics
-from src.ui import get_stock_portfolio_table, get_top_daily_movers
+from src.ui import (
+    get_stock_portfolio_table,
+    get_top_daily_movers,
+    get_total_portfolio_value,
+)
 import streamlit as st
 import pandas as pd
 from src.db import get_stock_purchase_history
@@ -12,7 +16,7 @@ if __name__ == "__main__":
     purchased_stocks_with_metrics = get_purchased_stocks_with_metrics(
         stock_purchase_history
     )
-
+    get_total_portfolio_value(purchased_stocks_with_metrics)
     get_top_daily_movers(purchased_stocks_with_metrics, "gainer")
     get_top_daily_movers(purchased_stocks_with_metrics, "loser")
 

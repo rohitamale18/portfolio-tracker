@@ -4,6 +4,12 @@ from src.market import get_stock_price_data
 from src.metrics import add_simple_moving_avg
 
 
+def get_total_portfolio_value(stock_data: pd.DataFrame):
+    st.subheader(
+        f"Total Portfolio Holdings: ${(stock_data["Close"] * stock_data["total_quantity"]).sum():,.2f}"
+    )
+
+
 def get_top_daily_movers(
     stock_data: pd.DataFrame, move_type: str = "gainer", threshold: int = 3
 ):
