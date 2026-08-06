@@ -6,7 +6,7 @@ import duckdb
 if __name__ == '__main__':
     
     # Read CSV
-    path = "stock_data/schwab_2026_07_30.csv"
+    path = "stock_data/schwab_2026_08_05.csv"
     raw_stock_data = pd.read_csv(path, delimiter=',', skiprows=2)
     
     # Cleaning
@@ -17,11 +17,11 @@ if __name__ == '__main__':
     staging_data.loc[:, 'avg_purchase_price'] = 1.0 * staging_data['cost_basis_cleaned'].astype('float') / staging_data['Qty (Quantity)'].astype('float')
     # Final data
     output_data = staging_data.loc[:, ['Symbol', 'avg_purchase_price', 'Qty (Quantity)']]
-    output_data.loc[:, 'purchase_date'] = datetime.strptime('2026-07-30', '%Y-%m-%d') 
+    output_data.loc[:, 'purchase_date'] = datetime.strptime(date.today().isoformat(), '%Y-%m-%d') 
     output_data.columns = ['ticker', 'purchase_price', 'quantity', 'purchase_date']
 
     # Initialize connection
-    with duckdb.connect("portfolio.db") as con:
+    with duckdb.connect("data/portfolio.db") as con:
         # If table does not exist
         con.sql("""
                 CREATE TABLE IF NOT EXISTS stock_purchase_history (purchase_date DATE, quantity DOUBLE, purchase_price DOUBLE, ticker VARCHAR)
