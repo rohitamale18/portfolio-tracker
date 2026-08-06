@@ -1,3 +1,8 @@
+import sys
+from pathlib import Path
+# add project root to path so `import src` works when running `python scripts/...`
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from datetime import date
 from src.db import get_transaction_events, upsert_daily_snapshot, create_tables
 from src.metrics import build_daily_holdings_snapshot
