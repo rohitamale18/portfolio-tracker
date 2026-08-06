@@ -32,11 +32,17 @@ if __name__ == '__main__':
             """
         )
         print("Table created")
+        # idempotent: delete existing rows for same purchase_date to avoid 4x duplication you saw (1.93M vs 480k)
+        purchase_date_val = output_data.iloc[0]["purchase_date"]
+        con.execute("DELETE FROM stock_purchase_history WHERE purchase_date = ?", [purchase_date_val])
+        print(f"Cleared existing rows for {purchase_date_val}")
+
         query = """
             INSERT INTO stock_purchase_history (purchase_date, quantity, purchase_price, ticker)
             VALUES (?, ?, ?, ?)
         """
         for row in output_data.itertuples(index=False):
             con.execute(query, (row.purchase_date, row.quantity, row.purchase_price, row.ticker))
+        print(f"Inserted {len(output_data)} rows")
 
     
