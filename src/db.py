@@ -25,6 +25,9 @@ def get_stock_purchase_history() -> pd.DataFrame:
     with duckdb.connect(DB_PATH) as con:
         purchase_history = con.sql("""
             SELECT * FROM stock_purchase_history
+            WHERE purchase_date = (
+                SELECT MAX(purchase_date) FROM stock_purchase_history
+            )
             """).df()
 
     return purchase_history
